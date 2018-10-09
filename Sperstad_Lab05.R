@@ -82,8 +82,9 @@ max(Gorilla_Data$CSize) #70.31287; Gggm053k has the maximum centroid size value 
 #have both the smallest centroid sizes and the largest! What in tarnation is
 #going on here?! In all seriousness, this seems like it would be a really
 #cool and useful mathematical tool to use when studying fish. For instance,
-#Tetraodontiformes contains species with crazy morphologies! You have tiny
-#puffers and huge Molas (Mola mola)!
+#Tetraodontiformes contains species with crazy morphologies! There are tiny
+#puffers and huge Molas (Mola mola), which would make these types of analyses
+#very interesting!
 
 
 
