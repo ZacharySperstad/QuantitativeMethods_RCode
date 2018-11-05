@@ -109,19 +109,19 @@ female.unknown.mdist
 
 ###                              Exercise 2                           ###
 
-master$spp<-substr(master$cat,1,3)
-h.spp<-c("Haa","Hal","Hau","Hma","Hmf","Hss")
-h.data<-subset(master,master$spp%in%h.spp)
-h.quat<-h.data[2:196]
+master$spp<-substr(master$cat,1,3) #Creates a variable in the master data matrix with taxonomic abbreviations.   
+h.spp<-c("Haa","Hal","Hau","Hma","Hmf","Hss") #Creates a vector with the taxonomic abbreviations for the desired species.
+h.data<-subset(master,master$spp%in%h.spp) #Creates a data matrix with only the hylobatids.
+h.quat<-h.data[2:196] #Creates a dataset for the hylobatids with only quantitative data.
 
-p<-195/3
-k<-3
-h.array<-arrayspecs(h.quat,p,k)
-h.gpa<-gpagen(h.array)
-h.coords<-h.gpa$coords
+p<-195/3 #Denotes how many 3D landmarks are in the dataset.
+k<-3 #Denotes how many dimensions to be cosidered.
+h.array<-arrayspecs(h.quat,p,k) #Creates an array from the hylobatid data.
+h.gpa<-gpagen(h.array) #Performs a GPA.
+h.coords<-h.gpa$coords #Extracts the coordinates from the GPA.
 
 h.cva<-CVA(h.coords,group=h.data$spp,
-                   cv=T,weighting=T)
+           cv=T,weighting=T) #Performs the cva analysis on the hylobatid date.
 h.cva
 # cross-validated classification results in frequencies
 #    Haa Hal Hau Hma Hmf Hss
@@ -160,7 +160,7 @@ species.col<-h.col[h.data$spp] #Assigns specific colors to specific species.
 plot(h.scores[,1],h.scores[,2], xlim=c(-10,20),ylim=c(-15,15),
      col=species.col,pch=19)
 legend("bottomright", legend=unique(h.data$spp), title = "Species", 
-      col=unique(species.col), pch=16, ncol=2, cex=0.70)
+       col=unique(species.col), pch=16, ncol=2, cex=0.70)
 
 h.manova<-manova(h.scores~h.data$spp)
 summary(h.manova)
@@ -169,13 +169,10 @@ summary(h.manova)
 #Residuals    144                                            
 ---
 #  Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-  
-  
-  
-  
+
 #Q8-
 #Q9-
-
+  
 . #I had to put this period here or my code wouldn't run.
 haa.scores<-subset(h.scores,h.data$spp=='Haa') #Creates a taxon specific subset of scores.
 hal.scores<-subset(h.scores,h.data$spp=='Hal') #Creates a taxon specific subset of scores.
