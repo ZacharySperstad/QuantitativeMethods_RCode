@@ -5,20 +5,20 @@
 
 ###                     Exercise 1                    ###
 
-master<-read.csv("master.csv")
-master$spp<-substr(master$cat,1,2)
-pp.master<-subset(master, master$spp=="Pp")
-pp.sex<-substr(pp.master$cat,4,4)
-quant<-pp.master[,2:196]
+master<-read.csv("master.csv") #Reads in master.csv file.
+master$spp<-substr(master$cat,1,2) #Creates a new variable for a taxonomic abbreviation.
+pp.master<-subset(master, master$spp=="Pp") #Subsets the data so only bonobos are included.
+pp.sex<-substr(pp.master$cat,4,4) #Creates a new variable for the sex of each individual.
+quant<-pp.master[,2:196] #Makes a new data set with only quantitative data.
 
 #Q1-  The cat IDs for the specimen with the unknown sexes are Ppnu067k, 
 #     Ppnu068k, Ppnu069k.
 
-require(geomorph)
-p<-195/3
-k<-3
-array<-arrayspecs(quant,p,k)
-gpa<-gpagen(array)
+require(geomorph) #Allows gemorph functions to be performed.
+p<-195/3 #Denotes how many 3D points we will have.
+k<-3 #Denotes number of dimensions.
+array<-arrayspecs(quant,p,k) #Creates an array of the quanitative data.
+gpa<-gpagen(array) #Performes the GPA analysis.
 shape<-gpa$coords
 
 mfshape<-coords.subset(shape,pp.sex)
@@ -177,33 +177,30 @@ summary(h.manova)
 #Q9-
 
 . #I had to put this period here or my code wouldn't run.
-haa.scores<-subset(h.scores,h.data$spp=='Haa')
-hal.scores<-subset(h.scores,h.data$spp=='Hal')
-hau.scores<-subset(h.scores,h.data$spp=='Hau')
-hma.scores<-subset(h.scores,h.data$spp=='Hma')
-hmf.scores<-subset(h.scores,h.data$spp=='Hmf')
-hss.scores<-subset(h.scores,h.data$spp=='Hss')
+haa.scores<-subset(h.scores,h.data$spp=='Haa') #Creates a taxon specific subset of scores.
+hal.scores<-subset(h.scores,h.data$spp=='Hal') #Creates a taxon specific subset of scores.
+hau.scores<-subset(h.scores,h.data$spp=='Hau') #Creates a taxon specific subset of scores.
+hma.scores<-subset(h.scores,h.data$spp=='Hma') #Creates a taxon specific subset of scores.
+hmf.scores<-subset(h.scores,h.data$spp=='Hmf') #Creates a taxon specific subset of scores.
+hss.scores<-subset(h.scores,h.data$spp=='Hss') #Creates a taxon specific subset of scores.
 
-h.cva$Var
+require(Hotelling) #Allows Hotelling Functions to be perfomed.
 
-install.packages("Hotelling")
-require(Hotelling)
-
-haa.hal<-hotelling.test(haa.scores,hal.scores)
-haa.hau<-hotelling.test(haa.scores,hau.scores)
-haa.hma<-hotelling.test(haa.scores,hma.scores)
-haa.hmf<-hotelling.test(haa.scores,hmf.scores)
-haa.hss<-hotelling.test(haa.scores,hss.scores)
-hal.hau<-hotelling.test(hal.scores,hau.scores)
-hal.hma<-hotelling.test(hal.scores,hma.scores)
-hal.hmf<-hotelling.test(hal.scores,hmf.scores)
-hal.hss<-hotelling.test(hal.scores,hss.scores)
-hau.hma<-hotelling.test(hau.scores,hma.scores)
-hau.hmf<-hotelling.test(hau.scores,hmf.scores)
-hau.hss<-hotelling.test(hau.scores,hss.scores)
-hma.hmf<-hotelling.test(hma.scores,hmf.scores)
-hma.hss<-hotelling.test(hma.scores,hss.scores)
-hmf.hss<-hotelling.test(hmf.scores,hss.scores)
+haa.hal<-hotelling.test(haa.scores,hal.scores) #Performs Hotelling Test on a subset of the taxa.
+haa.hau<-hotelling.test(haa.scores,hau.scores) #Performs Hotelling Test on a subset of the taxa.
+haa.hma<-hotelling.test(haa.scores,hma.scores) #Performs Hotelling Test on a subset of the taxa.
+haa.hmf<-hotelling.test(haa.scores,hmf.scores) #Performs Hotelling Test on a subset of the taxa.
+haa.hss<-hotelling.test(haa.scores,hss.scores) #Performs Hotelling Test on a subset of the taxa.
+hal.hau<-hotelling.test(hal.scores,hau.scores) #Performs Hotelling Test on a subset of the taxa.
+hal.hma<-hotelling.test(hal.scores,hma.scores) #Performs Hotelling Test on a subset of the taxa.
+hal.hmf<-hotelling.test(hal.scores,hmf.scores) #Performs Hotelling Test on a subset of the taxa.
+hal.hss<-hotelling.test(hal.scores,hss.scores) #Performs Hotelling Test on a subset of the taxa.
+hau.hma<-hotelling.test(hau.scores,hma.scores) #Performs Hotelling Test on a subset of the taxa.
+hau.hmf<-hotelling.test(hau.scores,hmf.scores) #Performs Hotelling Test on a subset of the taxa.
+hau.hss<-hotelling.test(hau.scores,hss.scores) #Performs Hotelling Test on a subset of the taxa.
+hma.hmf<-hotelling.test(hma.scores,hmf.scores) #Performs Hotelling Test on a subset of the taxa.
+hma.hss<-hotelling.test(hma.scores,hss.scores) #Performs Hotelling Test on a subset of the taxa.
+hmf.hss<-hotelling.test(hmf.scores,hss.scores) #Performs Hotelling Test on a subset of the taxa.
 
 haa.hal
 haa.hau
