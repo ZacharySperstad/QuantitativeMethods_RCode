@@ -6,10 +6,14 @@
 ###                     Exercise 1                    ###
 
 master<-read.csv("master.csv") #Reads in master.csv file.
-master$spp<-substr(master$cat,1,2) #Creates a new variable for a taxonomic abbreviation.
-pp.master<-subset(master, master$spp=="Pp") #Subsets the data so only bonobos are included.
-pp.sex<-substr(pp.master$cat,4,4) #Creates a new variable for the sex of each individual.
-quant<-pp.master[,2:196] #Makes a new data set with only quantitative data.
+master$spp<-substr(master$cat,1,2) #Creates a new variable 
+                                  #for a taxonomic abbreviation.
+pp.master<-subset(master, master$spp=="Pp") #Subsets the data so only 
+                                            #bonobos are included.
+pp.sex<-substr(pp.master$cat,4,4) #Creates a new variable for the sex 
+                                  #of each individual.
+quant<-pp.master[,2:196] #Makes a new data set with only quantitative 
+                         #data.
 
 #Q1-  The cat IDs for the specimen with the unknown sexes are Ppnu067k, 
 #     Ppnu068k, Ppnu069k.
@@ -19,20 +23,23 @@ p<-195/3 #Denotes how many 3D points we will have.
 k<-3 #Denotes number of dimensions.
 array<-arrayspecs(quant,p,k) #Creates an array of the quanitative data.
 gpa<-gpagen(array) #Performes the GPA analysis.
-shape<-gpa$coords
+shape<-gpa$coords #Extracts the coordinates from the GPA output.
 
-mfshape<-coords.subset(shape,pp.sex)
-ushape<-mfshape$u
-install.packages("abind")
-require("abind")
-mfshape<-abind(mfshape[1:2])
-mf.sex<-subset(pp.sex,pp.sex%in%c('m','f'))
+mfshape<-coords.subset(shape,pp.sex) #Subsets the coordinates  of the GPA
+                                     #by sex.
+ushape<-mfshape$u #Creates a new object with only the coordinates of
+                  #individuals with unknown sexes.
+#install.packages("abind") #Pound-ed to avoid continually installing.
+require("abind") #Allows abind functions to be performed.
+mfshape<-abind(mfshape[1:2])  #Combines multidimensional arrays.
+mf.sex<-subset(pp.sex,pp.sex%in%c('m','f')) #Subsets data by sex.
 
-require(Morpho)
+require(Morpho) #Allows Morpho functions to be performed.
 
-cva<-CVA(mfshape,group=mf.sex,cv=T,weighting=T)
-var<-cva$Var
-var
+cva<-CVA(mfshape,group=mf.sex,cv=T,weighting=T) #Performs a CVA on the 
+                                                #male and female coordinates.
+var<-cva$Var #Extracts the canonical root information from the CVA output.
+var #Shows canonical root.
 #     Canonical root
 #[1,]       1.419409
 
@@ -43,7 +50,7 @@ var
 #Q3-  Since we only have one variate, it explains all of the variance
 #     explained in this analysis (100%).
 
-cva
+cva #Shows cross-validation table for males and females.
 #cross-validated classification results in frequencies
 #   f  m
 #f 17  7
@@ -60,37 +67,48 @@ cva
 #Q4- Males were identified correctly 61.9% of the time. Females were
 #    identified correctly 70.8% of the time.
 
-u.aligned<-aperm(ushape)
-dim(u.aligned)<-c(3,195)
-mean.cent<-function(x){x<-x-mean(x)}
-u.matrix<-apply(u.aligned,2,mean.cent)
-uscores<-u.matrix%*%cva$CV
+u.aligned<-aperm(ushape) #Transpose an array by permuting its dimensions.
+dim(u.aligned)<-c(3,195) #Changes the dimensionality of the data for
+                         #the individuals with unknown sexes.
+mean.cent<-function(x){x<-x-mean(x)} #Creates a mean-centering function.
+u.matrix<-apply(u.aligned,2,mean.cent) #Mean centers the coordinates of
+                                       #individuals with unknown sexes.
+uscores<-u.matrix%*%cva$CV #Multiplies the mean-centered coordinates of the 
+                           #individuals with unknown sexes by the matrix
+                           #of canonical variates.
 
 #Q5-
 
-scores<-cva$CVscores
+scores<-cva$CVscores #Extracts scores from the CVA output.
 boxplot(scores~mf.sex, col=c("chartreuse", "cyan"), xlab="Sex", 
-        ylab="Canonical Variate Scores")
+        ylab="Canonical Variate Scores") #Creates a boxplot showing the 
+                                         #distribution of male and female 
+                                         #scores from the CVA.
 
 #Wow...I spelled chartreuse correctly on the first try.
 
-points(rep(1.5,3),uscores,col="purple",cex=2,pch=19)
+points(rep(1.5,3),uscores,col="purple",cex=2,pch=19) #Plots unknown scores 
+                                                     #as points on graph.
 
-female<-subset(scores,mf.sex=='f')
-male<-subset(scores,mf.sex=='m')
+female<-subset(scores,mf.sex=='f') #Subsets score matrix to only include 
+                                   #female scores.
+male<-subset(scores,mf.sex=='m') #Subsets scores matrix to only include 
+                                 #male scores.
 
-mean.male<-mean(male)
-mean.female<-mean(female)
+mean.male<-mean(male) #Calculates the mean of male scores.
+mean.female<-mean(female) #Calculates the mean of female scores.
 
-male.unknown.mdist<-uscores-mean.male
-male.unknown.mdist
+male.unknown.mdist<-uscores-mean.male #Finds distances between unknowns 
+                                      #and mean male scores.
+male.unknown.mdist #Shows distances.
 #            CV 1
 #[1,]  0.05107178
 #[2,] -2.03393000
 #[3,] -1.75221422
 
-female.unknown.mdist<-uscores-mean.female
-female.unknown.mdist
+female.unknown.mdist<-uscores-mean.female #Finds distance between unknowns 
+                                          #and the mean of female scores.
+female.unknown.mdist #Shows distances.
 #CV 1
 #[1,] 2.3854921
 #[2,] 0.3004903
@@ -109,20 +127,27 @@ female.unknown.mdist
 
 ###                              Exercise 2                           ###
 
-master$spp<-substr(master$cat,1,3) #Creates a variable in the master data matrix with taxonomic abbreviations.   
-h.spp<-c("Haa","Hal","Hau","Hma","Hmf","Hss") #Creates a vector with the taxonomic abbreviations for the desired species.
-h.data<-subset(master,master$spp%in%h.spp) #Creates a data matrix with only the hylobatids.
-h.quat<-h.data[2:196] #Creates a dataset for the hylobatids with only quantitative data.
+master$spp<-substr(master$cat,1,3) #Creates a variable in the master data 
+                                   #matrix with taxonomic abbreviations.   
+h.spp<-c("Haa","Hal","Hau","Hma","Hmf","Hss") #Creates a vector with the 
+                                              #taxonomic abbreviations for 
+                                              #the desired species.
+h.data<-subset(master,master$spp%in%h.spp) #Creates a data matrix with only 
+                                           #the hylobatids.
+h.quat<-h.data[2:196] #Creates a dataset for the hylobatids with only 
+                      #quantitative data.
 
 p<-195/3 #Denotes how many 3D landmarks are in the dataset.
 k<-3 #Denotes how many dimensions to be cosidered.
+
 h.array<-arrayspecs(h.quat,p,k) #Creates an array from the hylobatid data.
 h.gpa<-gpagen(h.array) #Performs a GPA.
 h.coords<-h.gpa$coords #Extracts the coordinates from the GPA.
 
 h.cva<-CVA(h.coords,group=h.data$spp,
-           cv=T,weighting=T) #Performs the cva analysis on the hylobatid date.
-h.cva
+           cv=T,weighting=T) #Performs the cva analysis on the hylobatid 
+                             #date.
+h.cva #Shows cross-validation table for CVA.
 # cross-validated classification results in frequencies
 #    Haa Hal Hau Hma Hmf Hss
 #Haa  17   2   1   3   2   0
@@ -150,28 +175,47 @@ h.cva
 #     (38.5%) were assigned correctly the least amount of times (i.e.
 #     difficult to diagnose).
 
-h.scores<-h.cva$CVscores
+h.scores<-h.cva$CVscores #Extracts CV scores from the CVA analysis.
 
-require(RColorBrewer)
+require(RColorBrewer) #Allows RColorBrewer functions to be performed.
 h.col<-brewer.pal(n=6, name='Set1') #Creates a vector with 6 colors.
 h.data$spp<-as.factor(h.data$spp) #Makes species variable a factor.
 species.col<-h.col[h.data$spp] #Assigns specific colors to specific species.
 
-plot(h.scores[,1],h.scores[,2], xlim=c(-10,20),ylim=c(-15,15),
-     col=species.col,pch=19)
-legend("bottomright", legend=unique(h.data$spp), title = "Species", 
-       col=unique(species.col), pch=16, ncol=2, cex=0.70)
+h.cva$Var #Gives a summary of the canonical variates obtained.
+#Canonical roots % Variance Cumulative %
+#[1,]      123.627051  76.583691     76.58369
+#[2,]       12.510708   7.750053     84.33374
+#[3,]       10.211811   6.325947     90.65969
+#[4,]        8.581967   5.316302     95.97599
+#[5,]        6.495850   4.024007    100.00000
 
-h.manova<-manova(h.scores~h.data$spp)
-summary(h.manova)
+plot(h.scores[,1],h.scores[,2], xlim=c(-10,20),ylim=c(-15,15),
+     col=species.col,pch=19,xlab="CV1 (76.6%)", ylab="CV2 (7.8%)", 
+     main="Hylobatid CVA") #Plots the scores from the hylobatid CVA.
+legend("bottomright", legend=unique(h.data$spp), 
+       title = "Species", col=unique(species.col), pch=16, ncol=2, 
+       cex=0.70) #Adds a sweet legend to my graph showing which color 
+                 #goes with which species.
+
+h.manova<-manova(h.scores~h.data$spp) #Performs MANOVA with the CVA scores 
+                                      #as the response variable and species 
+                                      #identity as the predictor variable.
+summary(h.manova) #Shows MANOVA results.
 #              Df Pillai approx F num Df den Df    Pr(>F)    
 #h.data$spp     5  4.591   323.28     25    720 < 2.2e-16 ***
 #Residuals    144                                            
 ---
 #  Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-#Q8-
-#Q9-
+  
+#Q8-  I am reporting Pillai's Trace. I did this because the sample size
+#     was very low and we have an unequal number of males and females.
+#Q9-  From our MANOVA, it was demonstrated that the shape of the skulls
+#     of hylobatid subspecies differed significantly based on subspecies
+#     identity. This was supported by a p-value < 2.2e-16. Although this
+#     tells us there is a significant difference within the group, it
+#     does not tell us where this difference is. We will need to perform
+#     additional tests to see which groups differ.
   
 . #I had to put this period here or my code wouldn't run.
 haa.scores<-subset(h.scores,h.data$spp=='Haa') #Creates a taxon specific subset of scores.
@@ -199,20 +243,22 @@ hma.hmf<-hotelling.test(hma.scores,hmf.scores) #Performs Hotelling Test on a sub
 hma.hss<-hotelling.test(hma.scores,hss.scores) #Performs Hotelling Test on a subset of the taxa.
 hmf.hss<-hotelling.test(hmf.scores,hss.scores) #Performs Hotelling Test on a subset of the taxa.
 
-haa.hal
-haa.hau
-haa.hma
-haa.hmf
-haa.hss
-hal.hau
-hal.hma
-hal.hmf
-hal.hss
-hau.hma
-hau.hmf
-hau.hss
-hma.hmf
-hma.hss
-hmf.hss
+haa.hal #p = 0
+haa.hau #p = 0
+haa.hma #p = 0
+haa.hmf #p = 0
+haa.hss #p = 0
+hal.hau #p = 0
+hal.hma #p = 0
+hal.hmf #p = 0
+hal.hss #p = 0
+hau.hma #p = 0
+hau.hmf #p = 0
+hau.hss #p = 0
+hma.hmf #p = 0
+hma.hss #p = 0
+hmf.hss #p = 0
 
-#Q10-
+#Q10- From this test, it looks like all subspecies differ significantly
+#     from each other, which is surprising, given the CVA scatterplot
+#     obtained makes it appear as though Hal, Hma, Hau, and Hmf overlap.
