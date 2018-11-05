@@ -162,4 +162,63 @@ plot(h.scores[,1],h.scores[,2], xlim=c(-10,20),ylim=c(-15,15),
 legend("bottomright", legend=unique(h.data$spp), title = "Species", 
       col=unique(species.col), pch=16, ncol=2, cex=0.70)
 
-h.manova<-manova(h.scores~h.spp)
+h.manova<-manova(h.scores~h.data$spp)
+summary(h.manova)
+#              Df Pillai approx F num Df den Df    Pr(>F)    
+#h.data$spp     5  4.591   323.28     25    720 < 2.2e-16 ***
+#Residuals    144                                            
+---
+#  Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+  
+  
+  
+  
+#Q8-
+#Q9-
+
+. #I had to put this period here or my code wouldn't run.
+haa.scores<-subset(h.scores,h.data$spp=='Haa')
+hal.scores<-subset(h.scores,h.data$spp=='Hal')
+hau.scores<-subset(h.scores,h.data$spp=='Hau')
+hma.scores<-subset(h.scores,h.data$spp=='Hma')
+hmf.scores<-subset(h.scores,h.data$spp=='Hmf')
+hss.scores<-subset(h.scores,h.data$spp=='Hss')
+
+h.cva$Var
+
+install.packages("Hotelling")
+require(Hotelling)
+
+haa.hal<-hotelling.test(haa.scores,hal.scores)
+haa.hau<-hotelling.test(haa.scores,hau.scores)
+haa.hma<-hotelling.test(haa.scores,hma.scores)
+haa.hmf<-hotelling.test(haa.scores,hmf.scores)
+haa.hss<-hotelling.test(haa.scores,hss.scores)
+hal.hau<-hotelling.test(hal.scores,hau.scores)
+hal.hma<-hotelling.test(hal.scores,hma.scores)
+hal.hmf<-hotelling.test(hal.scores,hmf.scores)
+hal.hss<-hotelling.test(hal.scores,hss.scores)
+hau.hma<-hotelling.test(hau.scores,hma.scores)
+hau.hmf<-hotelling.test(hau.scores,hmf.scores)
+hau.hss<-hotelling.test(hau.scores,hss.scores)
+hma.hmf<-hotelling.test(hma.scores,hmf.scores)
+hma.hss<-hotelling.test(hma.scores,hss.scores)
+hmf.hss<-hotelling.test(hmf.scores,hss.scores)
+
+haa.hal
+haa.hau
+haa.hma
+haa.hmf
+haa.hss
+hal.hau
+hal.hma
+hal.hmf
+hal.hss
+hau.hma
+hau.hmf
+hau.hss
+hma.hmf
+hma.hss
+hmf.hss
+
+#Q10-
