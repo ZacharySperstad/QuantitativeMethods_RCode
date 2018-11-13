@@ -18,19 +18,38 @@ coords<-gpa$coords #Extracts the landmarks coordinates from the GPA.
 ts<-plotTangentSpace(coords) #Plots coordinates into tangent space.
 scores<-ts$pc.scores #Extracts the scores from our coordinates in tangent space.
 
-mean.cran<-aggregate(master[,2:195],list(master$spp),mean)
+mean.cran<-aggregate(master[,2:195],
+                     list(master$spp),mean) #Finds the mean value for each variable 
+                                            #for each species and makes a new table 
+                                            #with only one value per variable per 
+                                            #species
 rownames(mean.cran)<-mean.cran$Group.1 #Makes row names the species identity.
-cran.dist<-dist(mean.cran[,-1],method='euclidean')
-comp.clust3<-hclust(cran.dist,method='average')
-plot(comp.clust3,lwd=2,xlab=NA,main='Average')
+cran.dist<-dist(mean.cran[,-1],method='euclidean') #Finds the Euclideans distances 
+                                                   #between each mean variable values.
+comp.clust3<-hclust(cran.dist,method='average') #Use the average linkage algorithm
+                                                #to cluster species (i.e. see which
+                                                #are most similar).
+plot(comp.clust3,lwd=2,xlab=NA,main='Average') #Those our average linkage tree.
 
-#Q1-  
+#Q1-  From this analysis, I see that Hs, Cm, Pb, Ha, and Hm form one large
+#     cluster while Ho, Gb, Gg, Ph, Po, Pp, and Pt form another. Additionally,
+#     there are smaller clusters that form, such as a gorilla cluster (Gb and Gg)
+#     as well as a Pan cluster (Pp and Pt). Wow.
 
 require(ape) #Allows ape functions to be performed.
 nj.clust<-nj(cran.dist) #Creates a neighbor joining tree.
 plot(nj.clust,main='Neighbor Joining Tree') #Plots the neighbor joining tree.
 
-#Q2-
+#Q2- They are different. First, we once again have two large clusters. However,
+#    humans form a polytomy with the two large clusters (i.e. they cannot be
+#    assigned to either group). In this tree gorillas once again for sister-
+#    relationships, but no bonobos and chimpanzees (Pan species) and put into
+#    different groups! Ha, Hm, Cm, Pb, and Hs once again belong to a "clade",
+#    but Pb and Cm swap places. With all this being said, Gb, Gg, Po, Ph, and Pt
+#    form a "clade" once again (with the exception of missing humans), however,
+#    the relationship of taxa within this clade is even more jumbled that the
+#    aforementioned clade.
+
 
 ################### Exercise 2 ######################
 
@@ -46,7 +65,11 @@ for(i in 1:12){
 } #This for loop is looking through the sexspp object and essentially tallying
   #how many individuals are a given species AND sex.
 
-#Q3-
+#Q3-  Like I said above, this loop is basically looking through the sexspp object
+#     for unique combinations of sex and species identities. Then, it begins
+#     searching through the master dataset for individuals fitting these various
+#     descriptions and counting them. The count of each individual fitting one
+#     of the identity combinations is added to the object "table".
 
 apply(table,2,as.numeric) #Makes columns numerical variables.
 rownames(table)<-mean.cran$Group.1 #Applies species identities as row names.
@@ -86,8 +109,10 @@ summary(sexspp.ca) #Gives a summary of the correspondence analysis.
 
 #Q4- Pt has the greatest mass.
 
-plot(sexspp.ca,mass=T,arrows=c(T,T), map='rowgreen')
-
+plot(sexspp.ca,mass=T,arrows=c(T,T), 
+     map='rowgreen') #Plots the MCA of sex and species identity of the primates
+                     #in the primate dataset.
+                                     
 #Q5- Hs, Hm, Pp, and Ha all appear to be close to u, meaning the have individuals
 #    with unknown sexes. I doubled-checked this in the sexspp matrix and it is true
 #    (pretty neat). There seems to be an abundance of females in Pt and those with
@@ -97,9 +122,9 @@ plot(sexspp.ca,mass=T,arrows=c(T,T), map='rowgreen')
 
 ################### Exercise 2 ######################
 
-data("HairEyeColor")
-hec.mca<-mjca(HairEyeColor)
-summary(hec.mca)
+data("HairEyeColor") #Reads in HairEyeColor dataset.
+hec.mca<-mjca(HairEyeColor) #Performs an MCA on the HairEyeColor dataset.
+summary(hec.mca) #Shows the results of the MCA.
 #dim    value      %   cum%   scree plot               
 #1      0.054579  65.6  65.6  **********************   
 #2      0.006263   7.5  73.1  ***                      
