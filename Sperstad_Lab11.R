@@ -11,13 +11,15 @@ hominid_orbits<-droplevels(hominid_orbits)
 quant<-hominid_orbits[5:58]
 p<-54/2
 k<-2
+
 require(geomorph)
+require(Rcpp)
+require(rgl)
 array<-arrayspecs(quant,p,k)
 require(Momocs)
 hom.out<-Out(array,fac=as.factor(hominid_orbits$genus))
 
 hom.efa<-efourier(hom.out)
-hom.efa
 #99% 
 #9 
 
@@ -85,8 +87,6 @@ hominid.2<-c("Gorilla","Homo","Pan","Pongo","Austral",
 hominid.2_orbits<-subset(orbits,orbits$genus%in%hominid.2)
 hominid.2_orbits<-droplevels(hominid.2_orbits)
 quant.2<-hominid.2_orbits[5:58]
-p<-54/2
-k<-2
 array.2<-arrayspecs(quant.2,p,k)
 hom.out.2<-Out(array.2,fac=as.factor(hominid.2_orbits$genus))
 
@@ -95,3 +95,11 @@ hom.efa.2<-efourier(hom.out.2,9)
 harmonic.co<-hom.efa.2$coe
 hom.pca.2<-PCA(hom.efa.2)
 eigvec<-hom.pca.2$rotation
+
+mean.cent<-function(x){x<-x-mean(x)} #Creates a mean-centering function.
+mc.harmonic.matrix<-apply(harmonic.co,2,mean.cent)
+
+scores<-mc.harmonic.matrix%*%eigvec
+
+pca.scores<-hom.pca.2$x
+mean.pca.scores<-apply(pca.scores,2,mean)
