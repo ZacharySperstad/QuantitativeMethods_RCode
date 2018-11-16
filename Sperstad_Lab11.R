@@ -5,15 +5,16 @@
 
 ################### Exercise 1 ######################
 orbits<-read.csv("Orb2D_upload.csv")
-orbits$spp<-substr(orbits$cat,1,2)
-hominines<-c("Gorilla","Homo","Pan","Pongo")
-hominine_orbits<-subset(orbits,orbits$genus%in%hominines)
-hominine_orbits<-droplevels(hominine_orbits)
-quant<-hominine_orbits[5:58]
+hominids<-c("Gorilla","Homo","Pan","Pongo")
+hominid_orbits<-subset(orbits,orbits$genus%in%hominids)
+hominid_orbits<-droplevels(hominid_orbits)
+quant<-hominid_orbits[5:58]
 p<-54/2
 k<-2
+require(geomorph)
 array<-arrayspecs(quant,p,k)
-hom.out<-Out(array,fac=as.factor(hominine_orbits$genus))
+require(Momocs)
+hom.out<-Out(array,fac=as.factor(hominid_orbits$genus))
 
 hom.efa<-efourier(hom.out)
 hom.efa
@@ -31,12 +32,12 @@ hom.efa
 
 require(RColorBrewer)
 speciescol1<-brewer.pal(n=4, name='Set1')
-hominine_orbits$genus<-as.factor(hominine_orbits$genus)
-genus.col<-speciescol1[hominine_orbits$genus]
+hominid_orbits$genus<-as.factor(hominid_orbits$genus)
+genus.col<-speciescol1[hominid_orbits$genus]
 
 hom.pca<-PCA(hom.efa)
 plot(hom.pca,col=genus.col)
-#legend(legend=unique(hominine_orbits$genus), 
+#legend(legend=unique(hominid_orbits$genus), 
 #       title = "Genera", col=unique(genus.col), pch=16, ncol=2, 
 #       cex=0.70)  ###Work on this.
 
@@ -46,7 +47,51 @@ eigval
 hom.scores<-hom.pca$x
 plot(hom.scores[,1],hom.scores[,2],ylim=c(-0.125,0.125),
      col=genus.col,pch=16, xlab="PC1 (55.7%)",ylab="PC2 (14.3%)",
-     main="Hominine Orbital PCA")
-legend("bottomright", legend=unique(hominine_orbits$genus), 
+     main="Hominid Orbit PCA")
+legend("bottomright", legend=unique(hominid_orbits$genus), 
        title = "Genera", col=unique(genus.col), pch=16, ncol=2, 
        cex=0.70)
+lda<-LDA(hom.pca,fac=hominid_orbits$genus)
+cvtable<-lda$CV.tab
+cvtable
+#classified
+#actual    Gorilla Homo Pan Pongo
+#Gorilla      46    6  51    12
+#Homo          2   30   9     1
+#Pan          29    5 122    10
+#Pongo         3    0  22    48
+
+correct<-lda$CV.correct
+correct
+#[1] 0.6212121
+
+plot_CV(lda)
+
+#Q7- It looks like it is challenging to distinguish
+#    hominid genera based on their orbit shape. However,
+#    a few stick out to me in the graph and table. For
+#    instance, humans are often distinguishable (30). Although
+#    it appears that gorillas have a great amount of
+#    individuals that were able to be placed (46), nearly half
+#    of the inndividuals were placed incorrectly (34). Pan seemed
+#    to do fairly well, with over half of their individuals
+#    being placed in Pan (122); however, many were also placed in
+#    Gorilla (51).
+
+################### Exercise 2 ######################
+
+hominid.2<-c("Gorilla","Homo","Pan","Pongo","Austral",
+             "Paranth")
+hominid.2_orbits<-subset(orbits,orbits$genus%in%hominid.2)
+hominid.2_orbits<-droplevels(hominid.2_orbits)
+quant.2<-hominid.2_orbits[5:58]
+p<-54/2
+k<-2
+array.2<-arrayspecs(quant.2,p,k)
+hom.out.2<-Out(array.2,fac=as.factor(hominid.2_orbits$genus))
+
+hom.efa.2<-efourier(hom.out.2,9)
+
+harmonic.co<-hom.efa.2$coe
+hom.pca.2<-PCA(hom.efa.2)
+eigvec<-hom.pca.2$rotation
