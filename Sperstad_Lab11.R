@@ -82,24 +82,56 @@ plot_CV(lda)
 
 ################### Exercise 2 ######################
 
-hominid.2<-c("Gorilla","Homo","Pan","Pongo","Austral",
-             "Paranth")
-hominid.2_orbits<-subset(orbits,orbits$genus%in%hominid.2)
-hominid.2_orbits<-droplevels(hominid.2_orbits)
-quant.2<-hominid.2_orbits[5:58]
-array.2<-arrayspecs(quant.2,p,k)
-hom.out.2<-Out(array.2,fac=as.factor(hominid.2_orbits$genus))
+eh<-c("Austral","Paranth")
+eh_orbits<-subset(orbits,orbits$genus%in%eh)
+eh_orbits<-droplevels(eh_orbits)
+eh_quant<-eh_orbits[5:58]
+eh_array<-arrayspecs(eh_quant,p,k)
+eh_out<-Out(eh_array,
+               fac=as.factor(eh_orbits$genus))
 
-hom.efa.2<-efourier(hom.out.2,9)
+eh_efa<-efourier(eh_out,9)
 
-harmonic.co<-hom.efa.2$coe
-hom.pca.2<-PCA(hom.efa.2)
-eigvec<-hom.pca.2$rotation
-
+eh_coe<-eh_efa$coe
 mean.cent<-function(x){x<-x-mean(x)} #Creates a mean-centering function.
-mc.harmonic.matrix<-apply(harmonic.co,2,mean.cent)
+eh_mchm<-apply(eh_coe,2,mean.cent) #Creates a mean-centered harmonic mean matrix from the exinct hominids.
 
-scores<-mc.harmonic.matrix%*%eigvec
+extant_eigvec<-hom.pca$rotation
+eh_scores<-eh_mchm%*%extant_eigvec
+row.names(eh_scores)<-eh_orbits$genus
 
-pca.scores<-hom.pca.2$x
-mean.pca.scores<-apply(pca.scores,2,mean)
+mc.hom.scores<-aggregate(hom.scores,
+                         list(hominid_orbits$genus),mean)
+mc.hom.scores<-mc.hom.scores[2:37]
+row.names(mc.hom.scores)<-unique(hominid_orbits$genus)
+all.taxa.scores<-rbind(eh_scores,mc.hom.scores)
+
+hom.dist<-dist(all.taxa.scores,method='euclidean')
+hom.dist
+#           Austral    Paranth    Gorilla       Homo      Pongo
+#Paranth 0.06542974                                            
+#Gorilla 0.01678213 0.05340095                                 
+#Homo    0.08858739 0.03599023 0.07909607                      
+#Pongo   0.02840043 0.03929741 0.01806773 0.06727589           
+#Pan     0.05213873 0.02760727 0.04534931 0.05050676 0.03402707
+ 
+#Q8-  It looks like Paranth falls most closely to Pan (d = ~0.028) while
+#     Atralipithicus seems to fall most closely to Gorilla (d = ~0.017).
+
+all_individual_scores<-rbind(eh_scores,hom.scores)
+
+desired_taxa<-c("Austral","Paranth","Pan","Pongo","Homo","Gorilla")
+hominids4color<-subset(orbits,orbits$genus%in%desired_taxa)
+
+speciescol2<-brewer.pal(n=6, name='Set1')
+hominids4color$genus<-as.factor(hominids4color$genus)
+hom.col<-speciescol2[hominids4color$genus]
+
+plot(all_individual_scores[,1],all_individual_scores[,2]
+     ,ylim=c(-0.125,0.125),col=hom.col,pch=16, xlab="PC1 ()",
+     ylab="PC2 ()",main="Hominid Orbit PCA")
+legend("bottomright", legend=unique(hominids4color$genus), 
+       title = "Genera", col=unique(hom.col), pch=16, ncol=2, 
+       cex=0.70)
+
+exta.mean<-mshapes(exta.efourier,FUN=mean,fac=exta.subset$genus)
