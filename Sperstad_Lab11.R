@@ -121,9 +121,10 @@ hom.dist
 all_individual_scores<-rbind(eh_scores,hom.scores)
 
 desired_taxa<-c("Austral","Paranth","Pan","Pongo","Homo","Gorilla")
+speciescol2<-brewer.pal(n=6, name='Set2')
 hominids4color<-subset(orbits,orbits$genus%in%desired_taxa)
-
-speciescol2<-brewer.pal(n=6, name='Set1')
+hominids4color$genus<-droplevels(hominids4color$genus)
+hominids4color$genus
 hominids4color$genus<-as.factor(hominids4color$genus)
 hom.col<-speciescol2[hominids4color$genus]
 
@@ -133,5 +134,6 @@ plot(all_individual_scores[,1],all_individual_scores[,2]
 legend("bottomright", legend=unique(hominids4color$genus), 
        title = "Genera", col=unique(hom.col), pch=16, ncol=2, 
        cex=0.70)
+
 
 exta.mean<-mshapes(exta.efourier,FUN=mean,fac=exta.subset$genus)
