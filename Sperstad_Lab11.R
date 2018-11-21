@@ -52,13 +52,14 @@ eigval #Shows eigenvalue values.
 hom.scores<-hom.pca$x #Extracts scores from the PCA object.
 plot(hom.scores[,1],hom.scores[,2],ylim=c(-0.125,0.125),
      col=genus.col,pch=16, xlab="PC1 (55.7%)",ylab="PC2 (14.3%)",
-     main="Hominid Orbit PCA")
+     main="Hominid Orbit PCA") #Plots the scores of the PCA of extant hominids.
 legend("bottomright", legend=unique(hominid_orbits$genus), 
        title = "Genera", col=unique(genus.col), pch=16, ncol=2, 
-       cex=0.70)
-lda<-LDA(hom.pca,fac=hominid_orbits$genus)
-cvtable<-lda$CV.tab
-cvtable
+       cex=0.70) #Adds a legend to the plot.
+lda<-LDA(hom.pca,fac=hominid_orbits$genus) #Performs a linear discriminant analysis
+                                           #on the extant hominid PCA output.
+cvtable<-lda$CV.tab #Creates a cross-validation table from the LDA output.
+cvtable #Shows the LDA table.
 #classified
 #actual    Gorilla Homo Pan Pongo
 #Gorilla      46    6  51    12
@@ -66,11 +67,11 @@ cvtable
 #Pan          29    5 122    10
 #Pongo         3    0  22    48
 
-correct<-lda$CV.correct
-correct
+correct<-lda$CV.correct #Extracts the proportion of correct placements.
+correct #Shows the proportion of correction placements.
 #[1] 0.6212121
 
-plot_CV(lda)
+plot_CV(lda) #Plots the LDA results.
 
 #Q7- It looks like it is challenging to distinguish
 #    hominid genera based on their orbit shape. However,
@@ -85,32 +86,40 @@ plot_CV(lda)
 
 ################### Exercise 2 ######################
 
-eh<-c("Austral","Paranth")
-eh_orbits<-subset(orbits,orbits$genus%in%eh)
-eh_orbits<-droplevels(eh_orbits)
-eh_quant<-eh_orbits[5:58]
-eh_array<-arrayspecs(eh_quant,p,k)
+eh<-c("Austral","Paranth") #Makes a vector of extinct hominid generic names.
+eh_orbits<-subset(orbits,orbits$genus%in%eh) #Extracts the extinct taxa data.
+eh_orbits<-droplevels(eh_orbits) #Drops the unwanted levels.
+eh_quant<-eh_orbits[5:58] #Creates a subset of only quantitative data.
+eh_array<-arrayspecs(eh_quant,p,k) #Creates an array of the landmarks of extinct
+                                   #taxa.
 eh_out<-Out(eh_array,
-            fac=as.factor(eh_orbits$genus))
-
-eh_efa<-efourier(eh_out,9)
-
-eh_coe<-eh_efa$coe
+            fac=as.factor(eh_orbits$genus)) #Outlines the landmarks of each taxon.
+eh_efa<-efourier(eh_out,9) #Performs an EFA on the extinct taxa landmarks
+eh_coe<-eh_efa$coe #Extracts the coefficient from the EFA on the extinct taxa.
 mean.cent<-function(x){x<-x-mean(x)} #Creates a mean-centering function.
 eh_mchm<-apply(eh_coe,2,mean.cent) #Creates a mean-centered harmonic mean matrix from the exinct hominids.
 
-extant_eigvec<-hom.pca$rotation
-eh_scores<-eh_mchm%*%extant_eigvec
-row.names(eh_scores)<-eh_orbits$genus
-
+extant_eigvec<-hom.pca$rotation #Extracts the eigenvectors from the extant hominid
+                                #PCA.
+eh_scores<-eh_mchm%*%extant_eigvec #Multiples the matrices of extant hominid
+                                   #eigenvectors with the mean-centered harmonic
+                                   #means of the extinct hominids.
+row.names(eh_scores)<-eh_orbits$genus #Applies row names to the extinct taxa score
+                                      #matrix.
 mc.hom.scores<-aggregate(hom.scores,
-                         list(hominid_orbits$genus),mean)
-mc.hom.scores<-mc.hom.scores[2:37]
-row.names(mc.hom.scores)<-unique(hominid_orbits$genus)
-all.taxa.scores<-rbind(eh_scores,mc.hom.scores)
-
-hom.dist<-dist(all.taxa.scores,method='euclidean')
-hom.dist
+                         list(hominid_orbits$genus),mean) #Finds means for each
+                                                          #genus of extant taxa.
+mc.hom.scores<-mc.hom.scores[2:37] #Creates a matrix of just the scores of extant
+                                   #taxa.
+row.names(mc.hom.scores)<-unique(hominid_orbits$genus) #Applies row names to the
+                                                       #matrix of scores of extant
+                                                       #taxa.
+all.taxa.scores<-rbind(eh_scores,mc.hom.scores) #Binds the matrices of scores for
+                                                #extinct and extant taxa.
+hom.dist<-dist(all.taxa.scores,method='euclidean') #Finds the Euclidean distances
+                                                   #between the scores of all taxa
+                                                   #included in the analysis.
+hom.dist #Shows the results of computing the Euclidean distances between genera.
 #           Austral    Paranth    Gorilla       Homo      Pongo
 #Paranth 0.06542974                                            
 #Gorilla 0.01678213 0.05340095                                 
@@ -121,7 +130,7 @@ hom.dist
 #Q8-  It looks like Paranth falls most closely to Pan (d = ~0.028) while
 #     Atralipithicus seems to fall most closely to Gorilla (d = ~0.017).
 
-all_individual_scores<-rbind(eh_scores,hom.scores)
+all_individual_scores<-rbind(eh_scores,hom.scores) #Combines the scores of all taxa.
 
 desired_taxa<-c("Austral","Paranth","Pan","Pongo","Homo","Gorilla") #Creates a vector
                                                                     #of desired taxa.
@@ -143,9 +152,14 @@ legend("bottomright", legend=unique(hominids4color$genus),
        cex=0.70) #Adds a legend to the plot of hominids scores.
 
 exta.coe<-hom.efa$coe #Extracts the coefficients from the EFA on extant hominids.
-exta.mean<-mshapes(hom.efa,FUN=mean,fac=hominid_orbits$genus) 
-exti.mean<-mshapes(eh_efa,FUN=mean,fac=eh_orbits$genus)
+exta.mean<-mshapes(hom.efa,FUN=mean,fac=hominid_orbits$genus) #Finds the mean shape
+                                                              #for each extant genus.
+exti.mean<-mshapes(eh_efa,FUN=mean,fac=eh_orbits$genus) #Finds the mean shape for
+                                                        #each extinct genus.
 
-tps_grid(exti.mean$shp$Austral,exta.mean$shp$Gorilla)
-
-tps_grid(exti.mean$shp$Paranth,exta.mean$shp$Pan)
+tps_grid(exti.mean$shp$Austral,exta.mean$shp$Gorilla) #Makes a TPS grid showing the
+                                                      #the transformation from
+                                                      #Australopithecus to Gorilla.
+tps_grid(exti.mean$shp$Paranth,exta.mean$shp$Pan) #Makes a TPS grid showing the
+                                                  #transformation from Paranthropus
+                                                  #to Pan.
