@@ -88,7 +88,7 @@ eh_orbits<-droplevels(eh_orbits)
 eh_quant<-eh_orbits[5:58]
 eh_array<-arrayspecs(eh_quant,p,k)
 eh_out<-Out(eh_array,
-               fac=as.factor(eh_orbits$genus))
+            fac=as.factor(eh_orbits$genus))
 
 eh_efa<-efourier(eh_out,9)
 
@@ -114,7 +114,7 @@ hom.dist
 #Homo    0.08858739 0.03599023 0.07909607                      
 #Pongo   0.02840043 0.03929741 0.01806773 0.06727589           
 #Pan     0.05213873 0.02760727 0.04534931 0.05050676 0.03402707
- 
+
 #Q8-  It looks like Paranth falls most closely to Pan (d = ~0.028) while
 #     Atralipithicus seems to fall most closely to Gorilla (d = ~0.017).
 
@@ -135,5 +135,11 @@ legend("bottomright", legend=unique(hominids4color$genus),
        title = "Genera", col=unique(hom.col), pch=16, ncol=2, 
        cex=0.70)
 
+require(Momocs)
+exta.coe<-hom.efa$coe
+exta.mean<-mshapes(hom.efa,FUN=mean,fac=hominid_orbits$genus)
+exti.mean<-mshapes(eh_efa,FUN=mean,fac=eh_orbits$genus)
 
-exta.mean<-mshapes(exta.efourier,FUN=mean,fac=exta.subset$genus)
+tps_grid(exti.mean$shp$Austral,exta.mean$shp$Gorilla)
+
+tps_grid(exti.mean$shp$Paranth,exta.mean$shp$Pan)
