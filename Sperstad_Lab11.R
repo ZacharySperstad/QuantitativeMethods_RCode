@@ -28,12 +28,11 @@ hom.efa<-efourier(hom.out) #Performs an EFA on the extant hominid data.
 
 #Q1- 9 harmonics are needed to ereach 99% of the harmonic
 #      power.
-
 #Q2- Because we are using 9 harmonics, we will have 36
 #    coefficients, since each harmonic has four coefficents
 #    (9x4=36).
-#Q3-
-
+#Q3- Adding harmonics is basically adding shapes until 99% of shape
+#    variation in shape is explained.
 
 require(RColorBrewer) #Allows RColorBrewer functions to be performed.
 speciescol1<-brewer.pal(n=4, name='Set1') #Creates a vector with 4 colors.
@@ -56,6 +55,14 @@ plot(hom.scores[,1],hom.scores[,2],ylim=c(-0.125,0.125),
 legend("bottomright", legend=unique(hominid_orbits$genus), 
        title = "Genera", col=unique(genus.col), pch=16, ncol=2, 
        cex=0.70) #Adds a legend to the plot.
+
+#Q4- From the first plot, it can be seen that PC1 explains 55.7% of the variation
+#    while 14.3% of the variation is explained by PC2.
+#Q5- Moving from left to right on PC1, it can be seen that the orbit changes from 
+#    circular to an oval. On PC2 as you move from top to bottom, it seems like the
+#    orbit is rotated clockwise.
+#Q6- It is hard to see, but I don't notice any clustering.
+
 lda<-LDA(hom.pca,fac=hominid_orbits$genus) #Performs a linear discriminant analysis
                                            #on the extant hominid PCA output.
 cvtable<-lda$CV.tab #Creates a cross-validation table from the LDA output.
