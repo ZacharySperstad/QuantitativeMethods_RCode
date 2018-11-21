@@ -4,22 +4,25 @@
 # Zachary Sperstad
 
 ################### Exercise 1 ######################
-orbits<-read.csv("Orb2D_upload.csv")
-hominids<-c("Gorilla","Homo","Pan","Pongo")
-hominid_orbits<-subset(orbits,orbits$genus%in%hominids)
-hominid_orbits<-droplevels(hominid_orbits)
-quant<-hominid_orbits[5:58]
-p<-54/2
-k<-2
+orbits<-read.csv("Orb2D_upload.csv") #Reads in orbit data.
+hominids<-c("Gorilla","Homo","Pan","Pongo") #Creates a vector of generic names of 
+                                            #taxa of interest.
+hominid_orbits<-subset(orbits,orbits$genus%in%hominids) #Subsets the full dataset to
+                                                        #only include the the desired
+                                                        #taxa.
+hominid_orbits<-droplevels(hominid_orbits) #Drops unwanted levels from data matrix.
+quant<-hominid_orbits[5:58] #Makes a new matrix with only quantitative data.
+p<-54/2 #Denotes the number of 2D landmarks included in the analysis.
+k<-2 #Denotes the number of dimensions used in the subsequent analyses.
 
-require(geomorph)
-require(Rcpp)
-require(rgl)
-array<-arrayspecs(quant,p,k)
-require(Momocs)
-hom.out<-Out(array,fac=as.factor(hominid_orbits$genus))
-
-hom.efa<-efourier(hom.out)
+require(geomorph) #Allows geomorph functions to be performed.
+require(Rcpp) #Allows Rcpp functions to be performed.
+require(rgl) #Allows rgl functions to be performed.
+array<-arrayspecs(quant,p,k) #Creates an array with primate landmark data.
+require(Momocs) #Allows Momocs functions to be performed.
+hom.out<-Out(array,fac=as.factor(hominid_orbits$genus)) #Makes an outline using the
+                                                        #landmarks.
+hom.efa<-efourier(hom.out) #Performs an EFA on the extant hominid data.
 #99% 
 #9 
 
@@ -32,21 +35,21 @@ hom.efa<-efourier(hom.out)
 #Q3-
 
 
-require(RColorBrewer)
-speciescol1<-brewer.pal(n=4, name='Set1')
-hominid_orbits$genus<-as.factor(hominid_orbits$genus)
-genus.col<-speciescol1[hominid_orbits$genus]
+require(RColorBrewer) #Allows RColorBrewer functions to be performed.
+speciescol1<-brewer.pal(n=4, name='Set1') #Creates a vector with 4 colors.
+hominid_orbits$genus<-as.factor(hominid_orbits$genus) #Makes generic names factors.
+genus.col<-speciescol1[hominid_orbits$genus] #Applies specific colors to each genera.
 
-hom.pca<-PCA(hom.efa)
-plot(hom.pca,col=genus.col)
+hom.pca<-PCA(hom.efa) #Performs a PCA on the EFA output.
+plot(hom.pca,col=genus.col) #Plots PCA results
 #legend(legend=unique(hominid_orbits$genus), 
 #       title = "Genera", col=unique(genus.col), pch=16, ncol=2, 
-#       cex=0.70)  ###Work on this.
+#       cex=0.70)  #I couldn't get this gosh-darn code to work.
 
-eigval<-hom.pca$eig
-eigval
+eigval<-hom.pca$eig #Extracts the eigenvalues from the PCA object.
+eigval #Shows eigenvalue values.
 #[1] 5.572011e-01 1.432159e-01
-hom.scores<-hom.pca$x
+hom.scores<-hom.pca$x #Extracts scores from the PCA object.
 plot(hom.scores[,1],hom.scores[,2],ylim=c(-0.125,0.125),
      col=genus.col,pch=16, xlab="PC1 (55.7%)",ylab="PC2 (14.3%)",
      main="Hominid Orbit PCA")
@@ -120,24 +123,27 @@ hom.dist
 
 all_individual_scores<-rbind(eh_scores,hom.scores)
 
-desired_taxa<-c("Austral","Paranth","Pan","Pongo","Homo","Gorilla")
-speciescol2<-brewer.pal(n=6, name='Set2')
-hominids4color<-subset(orbits,orbits$genus%in%desired_taxa)
-hominids4color$genus<-droplevels(hominids4color$genus)
-hominids4color$genus
-hominids4color$genus<-as.factor(hominids4color$genus)
-hom.col<-speciescol2[hominids4color$genus]
+desired_taxa<-c("Austral","Paranth","Pan","Pongo","Homo","Gorilla") #Creates a vector
+                                                                    #of desired taxa.
+speciescol2<-brewer.pal(n=6, name='Set2') #Creates a vector with 6 colors.
+hominids4color<-subset(orbits,orbits$genus%in%desired_taxa) #Subsets the original
+                                                            #dataset to only include
+                                                            #the desired taxa.
+hominids4color$genus<-droplevels(hominids4color$genus) #Drops unwanted levels.
+hominids4color$genus #Checks to make sure unwanted levels are dropped.
+hominids4color$genus<-as.factor(hominids4color$genus) #Makes the generic names factors.
+hom.col<-speciescol2[hominids4color$genus] #Applies specific colors to different genera.
 
 plot(all_individual_scores[,1],all_individual_scores[,2]
      ,ylim=c(-0.125,0.125),col=hom.col,pch=16, xlab="PC1 ()",
-     ylab="PC2 ()",main="Hominid Orbit PCA")
+     ylab="PC2 ()",main="Hominid Orbit PCA") #Plots hominid scores (extinct and
+                                             #extant).
 legend("bottomright", legend=unique(hominids4color$genus), 
        title = "Genera", col=unique(hom.col), pch=16, ncol=2, 
-       cex=0.70)
+       cex=0.70) #Adds a legend to the plot of hominids scores.
 
-require(Momocs)
-exta.coe<-hom.efa$coe
-exta.mean<-mshapes(hom.efa,FUN=mean,fac=hominid_orbits$genus)
+exta.coe<-hom.efa$coe #Extracts the coefficients from the EFA on extant hominids.
+exta.mean<-mshapes(hom.efa,FUN=mean,fac=hominid_orbits$genus) 
 exti.mean<-mshapes(eh_efa,FUN=mean,fac=eh_orbits$genus)
 
 tps_grid(exti.mean$shp$Austral,exta.mean$shp$Gorilla)
