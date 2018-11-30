@@ -41,7 +41,6 @@ dim(aligned)<-c(547,195)
 ID<-master[1:3]
 ID.coord.matrix<-cbind(ID,aligned)
 
-
 aggregated.data<-aggregate(ID.coord.matrix,list(ID.coord.matrix$PhyloSpp),
                            FUN=mean)
 row.names(aggregated.data)<-aggregated.data$Group.1
@@ -77,4 +76,18 @@ mean.csize.extract
 
 #Q6- It looks like Pan paniscus (~38.5) has a centroid size 
 #    closest to the estimatd centroid size of the MRCA.
+
+mean.quant<-aggregated.data[5:199]
+mean.array<-arrayspecs(mean.quant,p,k)
+dim(mean.array)<-c(16,195)
+rownames(mean.array)<-dimnames(aggregated.data$Group1)[[3]]
+fam<-aggregated.data$Fam
+
+
+fam.col<-c("green1","blue1","purple1")[as.factor(mean.array[sub.tips,
+                                       aggregated.data$Fam])]
+pms<-plotGMPhyloMorphoSpace(ladderized.tree,mean.array,ancState=T,
+                            plot.param=ls(t.bg=fam.col))
+#Q7-
+
 
