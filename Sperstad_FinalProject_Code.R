@@ -9,6 +9,9 @@ behavior.known<-subset(cranial,
                        cranial$Sand.Diving%in%behavior) #Subsets the data to include
                                                         #only the labrids with known
                                                         #behavior.
+summary(behavior.known$Sand.Diving)
+#nsd  sd sdr   u 
+# 61  32   2   0 
 basic.coords<-behavior.known[6:44] #Subsets the dataset to include only quantitative
                                    #data.
 require(geomorph) #Allows geomorph functions to be performed.
@@ -18,9 +21,10 @@ array<-arrayspecs(basic.coords,p,k) #Creates an array of the landmarks.
 gpa<-gpagen(array) #Performs a GPA on the array.
 shape<-gpa$coords #Extracts the coordinates from the GPA object.
 consensus.shape<-gpa$consensus #Creates an object for the consensus shape of the
-plotAllSpecimens(shape)                               
+plotAllSpecimens(shape)
 csize<-gpa$Csize
 hist(csize,breaks=95,col='blue',xlab='Centroid Size')
+
 
 require(Morpho)
 behavior.diffs<-permudist(shape,groups=behavior.known$Sand.Diving,rounds=1000)
@@ -50,7 +54,6 @@ behavior.lm
 #1000 Permutations
 #ANOVA effect sizes and P-values based on empirical F distributions
 
-
 #          Df      SS       MS     Rsq      F    Z Pr(>F)   
 #behavior   2 0.21801 0.109007 0.11644 6.0621 4.33  0.001 **
 #Residuals 92 1.65432 0.017982 0.88356                      
@@ -68,7 +71,7 @@ allo
 #1000 Permutations
 #ANOVA effect sizes and P-values based on empirical F distributions
 
-#Df      SS      MS     Rsq      F      Z Pr(>F)   
+#          Df      SS      MS     Rsq      F      Z Pr(>F)   
 #log(size)  1 0.37161 0.37161 0.19848 23.029 5.6921  0.001 **
 #Residuals 93 1.50072 0.01614 0.80152                        
 #Total     94 1.87233                                        
@@ -76,6 +79,7 @@ allo
 #Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 plot(allo,method='RegScore',pch=19,cex=1.5,cex.lab=1.5)
+abline(allo)
 
 
 ts<-plotTangentSpace(shape)
@@ -90,6 +94,9 @@ eigval
 # [1] 0.381 0.168 0.120 0.089 0.041 0.036 0.024 0.018 0.015 0.013 0.012 0.011 0.010
 #[14] 0.009 0.008 0.007 0.006 0.005 0.005 0.004 0.004 0.003 0.002 0.002 0.002 0.001
 #[27] 0.001 0.001 0.001 0.001 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000
+barplot(eigval,ylab='Proportion of Variance',ylim=c(0,0.4))
+
+
 
 require(RColorBrewer) #Allows RColorBrewerFunctions to be performed.
 
@@ -109,10 +116,10 @@ legend3d(legend=unique(behavior.known$Sand.Diving)) #Adds a legend to the 3d gra
 plot(scores123[,1],scores123[,2],col=behavior.col,pch=16,ylim=c(-.25,.25),xlab='PC1 (38.1%)',ylab='PC2 (16.8%)')
 legend(x=0.27,y=0.24,legend=unique(behavior.known$Sand.Diving),pch=16,
        col=unique(shape.col))
-plot(scores123[,1],scores123[,3],col=behavior.col,pch=16,ylim=c(-0.25,0.25),xlab='PC1 (38.1%)',ylab='PC3 ()')
+plot(scores123[,1],scores123[,3],col=behavior.col,pch=16,ylim=c(-0.25,0.25),xlab='PC1 (38.1%)',ylab='PC3 (12.0%)')
 legend(x=0.27,y=0.24,legend=unique(behavior.known$Sand.Diving),pch=16,
        col=unique(shape.col))
-plot(scores123[,2],scores123[,3],col=behavior.col,pch=16,ylim=c(-0.17,0.17),xlab='PC2 (38.1%)',ylab='PC3 ()')
+plot(scores123[,2],scores123[,3],col=behavior.col,pch=16,ylim=c(-0.17,0.17),xlab='PC2 (38.1%)',ylab='PC3 (12.0%)')
 legend(x=0.08,y=0.155,legend=unique(behavior.known$Sand.Diving),pch=16,cex=0.75,
        col=unique(shape.col),ncol=3)
 
@@ -137,4 +144,4 @@ sd.shape<-
 sdr.shape<-
 nsd.shape<-
 
-
+cite("base")
