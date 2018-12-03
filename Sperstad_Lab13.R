@@ -100,9 +100,9 @@ fam.col<-c("green1","blue1",
            "purple1")[as.factor(aggregated.data[sub.tips,4])] #Assigns specific colors to each family.
 
 
-pms<-plotGMPhyloMorphoSpace(ladderized.tree,mean.array,ancState=T,plot.param=ls(t.bg=fam.col))
+pms<-plotGMPhyloMorphoSpace(ladderized.tree,mean.array,ancState=T,
+                            plot.param=list(t.bg=fam.col))
 
-##############################################################################################
 
 #Q7-
 
