@@ -92,14 +92,38 @@ mean.csize.extract
 mean.quant<-aggregated.data[5:199] #Creats a subset of the data with only
                                    #quantitative data.
 mean.array<-arrayspecs(mean.quant,p,k) #Creates an array from the (averaged by species) quantitative data.
-dim(mean.array)<-c(16,195) #Changes dimension of arrays to 16x195.
-rownames(mean.array)<-dimnames(aggregated.data$Group1)[[3]] #Assigns names in "Group1" as 
-                                                            #row names of the mean.array object.
-fam<-aggregated.data$Fam #Assigns family names to an object
+#dim(mean.array)<-c(16,195) #Changes dimension of arrays to 16x195.
+#rownames(mean.array)<-dimnames(aggregated.data$Group1)[[3]] #Assigns names in "Group1" as 
+dimnames(mean.array)[[3]]<-rownames(aggregated.data) #row names of the mean.array object.
+
+fam.col<-c("green1","blue1",
+           "purple1")[as.factor(aggregated.data[sub.tips,4])] #Assigns specific colors to each family.
 
 
-fam.col<-c("green1","blue1","purple1")[as.factor(mean.array[sub.tips,
-          aggregated.data$Fam])] #Assigns specific colors to each family.
-pms<-plotGMPhyloMorphoSpace(ladderized.tree,mean.array,ancState=T,
-                            plot.param=ls(t.bg=fam.col))
+pms<-plotGMPhyloMorphoSpace(ladderized.tree,mean.array,ancState=T,plot.param=ls(t.bg=fam.col))
+
+##############################################################################################
+
 #Q7-
+
+ase<-pms$
+  
+plot3d()
+
+###################### Exercise 4 ######################
+
+ppca<-phyl.pca(ladderized.tree,mean.quant,method='BM',mode='cov')
+eigvec<-ppca$Evec
+eigval<-diag(ppca$Eval)/sum(diag(ppca$Eval))
+eigval
+#        PC1         PC2         PC3         PC4         PC5         PC6         PC7         PC8         PC9        PC10 
+#0.475988799 0.232262041 0.093148258 0.052392977 0.035449733 0.021582167 0.019456914 0.016108058 0.011786924 0.011407753 
+#       PC11        PC12        PC13        PC14        PC15 
+#0.009830644 0.008085034 0.005991433 0.004533553 0.001975714
+sum(eigval[1:8]) #0.9463889
+
+##Q8- I would keep the first 8 because these 8 explain ~95% of the variation explained by all pPC axes.
+
+ppc.scores<-ppca$S
+
+
