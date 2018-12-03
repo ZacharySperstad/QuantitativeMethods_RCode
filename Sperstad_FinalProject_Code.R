@@ -7,13 +7,13 @@ cranial<-read.csv("neurocranium_averaged.csv") #Reads in landmark data.
 behavior<-c("sd","sdr","nsd") #Creates a vector of behavior categories.
 behavior.known<-subset(cranial,
                        cranial$Sand.Diving%in%behavior) #Subsets the data to include
-                                                        #only the labrids with known
-                                                        #behavior.
+#only the labrids with known
+#behavior.
 summary(behavior.known$Sand.Diving)
 #nsd  sd sdr   u 
 # 61  32   2   0 
 basic.coords<-behavior.known[6:44] #Subsets the dataset to include only quantitative
-                                   #data.
+#data.
 require(geomorph) #Allows geomorph functions to be performed.
 k<-3 #Denotes the dimentionality of the data.
 p<-39/3 #Denotes how many 3D landmarks will be in the analysis.
@@ -141,7 +141,7 @@ sd<-cranial[,44]
 behavior.shape<-coords.subset(shape,sd)
 
 sd.shape<-
-sdr.shape<-
-nsd.shape<-
-
-cite("base")
+  sdr.shape<-
+  nsd.shape<-
+  
+  cite("base")
