@@ -106,24 +106,58 @@ pms<-plotGMPhyloMorphoSpace(ladderized.tree,mean.array,ancState=T,
 
 #Q7-
 
-ase<-pms$
-  
-plot3d()
+ase.array<-arrayspecs(pms,p,k)
+plot3d(ase.array[,,1]) #Gawhddam! I can't believe that worked! :D This plotted the coordinates of the MRCA
+                       #of the taxa in our tree.
+
 
 ###################### Exercise 4 ######################
 
-ppca<-phyl.pca(ladderized.tree,mean.quant,method='BM',mode='cov')
-eigvec<-ppca$Evec
-eigval<-diag(ppca$Eval)/sum(diag(ppca$Eval))
-eigval
+ppca<-phyl.pca(ladderized.tree,mean.quant,method='BM',mode='cov') #Performs pPCA.
+eigvec<-ppca$Evec #Extracts the eigenvectors from the ppca object.
+eigval<-diag(ppca$Eval)/sum(diag(ppca$Eval)) #Calculate proportion of variance explained by each pPC
+eigval #Shows eigenvalues.
 #        PC1         PC2         PC3         PC4         PC5         PC6         PC7         PC8         PC9        PC10 
 #0.475988799 0.232262041 0.093148258 0.052392977 0.035449733 0.021582167 0.019456914 0.016108058 0.011786924 0.011407753 
 #       PC11        PC12        PC13        PC14        PC15 
 #0.009830644 0.008085034 0.005991433 0.004533553 0.001975714
+
+ppc.scores<-ppca$S
 sum(eigval[1:8]) #0.9463889
 
 ##Q8- I would keep the first 8 because these 8 explain ~95% of the variation explained by all pPC axes.
 
-ppc.scores<-ppca$S
+
+mean.cent<-function(x){x<-x-mean(x)}
+mc.coords<-apply(aligned,2,mean.cent)
+new.scores<-mc.coords%*%eigvec
+
+super.cool.matrix<-data.frame(ID,new.scores)
+
+col1<-brewer.pal(n=9, name='Set1')
+col2<-brewer.pal(n=7, name='Set2')
+ccol<-c(col1,col2)
+super.cool.matrix$PhyloSpp<-as.factor(super.cool.matrix$PhyloSpp)
+species.col<-ccol[super.cool.matrix$PhyloSpp]
+
+plot(super.cool.matrix$PC1,super.cool.matrix$PC2, ylim=c(-0.25,0.25),pch=16,
+     col=species.col, xlab="PC1 (47.6%)",ylab='PC 2 (23.2%)')
+legend(x=-0.225,y=-0.13,legend=levels(super.cool.matrix$PhyloSpp),ncol=3,cex=0.65,
+       pch=16,col=unique(species.col))
+
+plotRefToTarget(mean.array[,,8],mean.array[,,9],method='vector')
 
 
+#Q9- Species tend to cluster together pretty tightly. Congeners do as well. Interestingly,
+#    P. paniscus is way off to the righthand side of the graph and has quite a bit of scatter.
+#    Off to the bottom left, there is a cluster of Homo sapiens, Papio anubis, Hylobates agilis,
+#    and Hylobates albibarbis. Moving from Hylobates muelleri to Pan
+#    paniscus, it appears that the back of the skull gets deeper, the 
+#    mandible and maxilla extend outward, and the face gets wider.
+
+#Q10- The first thing I would note is that the gorillas are no longer
+#     on the far ends of the graph, but instead are in the middle. Homo
+#     sapiens are also no longer dramatic outliers. However, Pan paniscus
+#     is now! Interesting, in the graph I am referring back to, Pan paniscus
+#     and Hylobates muelleri are not spread across the x-axis as much as
+#     they are in this figure.
